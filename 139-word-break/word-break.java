@@ -1,28 +1,23 @@
 class Solution {
-    private Boolean[] t;
-    int n;
     public boolean wordBreak(String s, List<String> wordDict) {
-        n = s.length();
-        t = new Boolean[s.length()];
-        return solve(s, 0, wordDict);
-    }
+        HashSet<String> wordSet = new HashSet<>(wordDict);
 
-    private boolean solve(String s, int idx, List<String> wordDict){
-        if(idx == n){
-            return true;
+        int maxLen = 0;
+        for(String word : wordDict){
+            maxLen = Math.max(maxLen, word.length());
         }
+        int n = s.length();
+        boolean[] dp = new boolean[n+1];
+        dp[0] = true;
 
-        if(t[idx] != null){
-            return t[idx];
-        }
-
-        for(int endIdx = idx + 1; endIdx <= n; endIdx++){
-            String split = s.substring(idx, endIdx);
-
-            if(wordDict.contains(split) && solve(s, endIdx, wordDict)){
-                return t[idx] = true;
+        for(int i = 1; i <= n; i++){
+            for(int j = i - 1; j >= Math.max(0, i - maxLen); j--){
+                if(dp[j] && wordSet.contains(s.substring(j, i))){
+                    dp[i] = true;
+                    break;
+                }
             }
         }
-        return t[idx] =  false;
+        return dp[n];
     }
 }
